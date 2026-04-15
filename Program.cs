@@ -2,34 +2,30 @@ using Microsoft.EntityFrameworkCore;
 using dotnet_services_viewer.Infrastructure;
 using dotnet_services_viewer.Application.Interfaces;
 using dotnet_services_viewer.Infrastructure.SSH;
+using dotnet_services_viewer.Infrastructure.Security;
 using dotnet_services_viewer.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=monitoring.db"));
 
 builder.Services.AddScoped<ISshClient, SshService>();
+builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
 builder.Services.AddHostedService<MonitoringService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
-app.UseHttpsRedirection();
-app.UseRouting();
+// ... (previous code)
 
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+app.MapHub<dotnet_services_viewer.Hubs.MonitoringHub>("/monitoringHub");
 
 app.MapControllerRoute(
     name: "default",

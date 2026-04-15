@@ -1,0 +1,98 @@
+@model Node
+
+@{
+    ViewData["Title"] = "Node Details";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="mb-0">@Model.Hostname</h1>
+            <p class="text-muted mb-0">@Model.IpAddress</p>
+        </div>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Edit Settings</a>
+            <a asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">SSH Information</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><strong>User:</strong> @Model.SshConfig.Username</li>
+                        <li class="mb-2"><strong>Port:</strong> @Model.SshConfig.Port</li>
+                        <li class="mb-2"><strong>Key Path:</strong> @(string.IsNullOrEmpty(Model.SshConfig.PrivateKeyPath) ? "None (using Password)" : Model.SshConfig.PrivateKeyPath)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-info btn-sm">Refresh Stats</button>
+                        <button class="btn btn-outline-warning btn-sm">Test Connection</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Monitored Services (Containers)</h5>
+                    <button class="btn btn-sm btn-light">Add Service</button>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>CPU Usage</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (!Model.Containers.Any())
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-muted">
+                                            No services are being monitored on this node.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var container in Model.Containers)
+                                    {
+                                        <tr>
+                                            <td>@container.Name</td>
+                                            <td>
+                                                <span class="badge @(container.Status == "Up" ? "bg-success" : "bg-danger")">
+                                                    @container.Status
+                                                </span>
+                                            </td>
+                                            <td>@container.CurrentCpuUsage%</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-link text-danger">Remove</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
