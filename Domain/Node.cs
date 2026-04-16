@@ -8,7 +8,7 @@ public class Node
     public string Hostname { get; set; } = string.Empty;
     public string IpAddress { get; set; } = string.Empty;
     public SshConfig SshConfig { get; set; } = new SshConfig();
-    public List<Container> Containers { get; set; } = new List<Container>();
+    public List<MonitoredService> Services { get; set; } = new List<MonitoredService>();
 }
 
 public class SshConfig

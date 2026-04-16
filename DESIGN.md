@@ -4,7 +4,7 @@
 
 ### Ubiquitous Language
 - **Node:** A physical or virtual server reachable via SSH.
-- **Container:** Any monitored entity (Docker, Podman, Web Endpoint, DB). Unified term for consistency.
+- **Service:** Any monitored entity (Docker, Podman, Web Endpoint, DB). Unified term for consistency.
 - **Agent:** The logic within the app that connects to nodes to fetch data.
 - **Status:** The current health state (Up, Down, Warning, Maintenance).
 - **Heartbeat:** A single check event with metrics and status.

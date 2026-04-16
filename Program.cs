@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=monitoring.db"));
 
 builder.Services.AddScoped<ISshClient, SshService>();
+builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddSingleton<IEncryptionService, EncryptionService>();
 builder.Services.AddHostedService<MonitoringService>();
 

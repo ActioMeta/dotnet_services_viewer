@@ -45,11 +45,13 @@ public class MonitoringServiceTests
         mockClients.Setup(c => c.All).Returns(mockClientProxy.Object);
 
         var mockEncryption = new Mock<IEncryptionService>();
+        var mockServiceManager = new Mock<IServiceManager>();
         
         var services = new ServiceCollection();
         services.AddSingleton(context);
         services.AddSingleton(mockSsh.Object);
         services.AddSingleton(mockEncryption.Object);
+        services.AddSingleton(mockServiceManager.Object);
         var serviceProvider = services.BuildServiceProvider();
 
         var logger = new Mock<ILogger<MonitoringService>>().Object;

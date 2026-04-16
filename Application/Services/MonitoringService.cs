@@ -44,14 +44,17 @@ public class MonitoringService : BackgroundService
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var sshClient = scope.ServiceProvider.GetRequiredService<ISshClient>();
+        var serviceManager = scope.ServiceProvider.GetRequiredService<IServiceManager>();
         var encryptionService = scope.ServiceProvider.GetRequiredService<IEncryptionService>();
 
-        var nodes = await context.Nodes.Include(n => n.Containers).ToListAsync();
+        var nodes = await context.Nodes.Include(n => n.Services).ToListAsync();
 
         foreach (var node in nodes)
         {
             try
             {
+                await serviceManager.UpdateServicesStatusAsync(node);
+                
                 string? decryptedPassword = null;
                 if (!string.IsNullOrEmpty(node.SshConfig.Password))
                 {
@@ -77,16 +80,17 @@ public class MonitoringService : BackgroundService
                 {
                     var cpuPercentage = Math.Min(loadAvg * 100 / 4, 100);
 
-                    foreach (var container in node.Containers)
-                    {
-                        container.UpdateStatus(cpuPercentage);
-                    }
-
                     await _hubContext.Clients.All.SendAsync("ReceiveNodeUpdate", new {
                         nodeId = node.Id,
                         hostname = node.Hostname,
                         cpuUsage = cpuPercentage,
-                        status = "Up"
+                        status = "Up",
+                        services = node.Services.Select(s => new {
+                            s.Id,
+                            s.Name,
+                            s.Status,
+                            s.CurrentCpuUsage
+                        })
                     });
                 }
             }

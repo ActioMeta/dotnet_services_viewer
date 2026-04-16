@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Node> Nodes { get; set; }
-    public DbSet<Container> Containers { get; set; }
+    public DbSet<MonitoredService> Services { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,8 +18,9 @@ public class AppDbContext : DbContext
             .OwnsOne(n => n.SshConfig);
 
         modelBuilder.Entity<Node>()
-            .HasMany(n => n.Containers)
+            .HasMany(n => n.Services)
             .WithOne()
+            .HasForeignKey(s => s.NodeId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

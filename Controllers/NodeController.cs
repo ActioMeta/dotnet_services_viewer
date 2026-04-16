@@ -20,7 +20,7 @@ public class NodeController : Controller
     public async Task<IActionResult> Index()
     {
         var nodes = await _context.Nodes
-            .Include(n => n.Containers)
+            .Include(n => n.Services)
             .ToListAsync();
         return View(nodes);
     }
@@ -28,7 +28,7 @@ public class NodeController : Controller
     public async Task<IActionResult> Details(int id)
     {
         var node = await _context.Nodes
-            .Include(n => n.Containers)
+            .Include(n => n.Services)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (node == null) return NotFound();

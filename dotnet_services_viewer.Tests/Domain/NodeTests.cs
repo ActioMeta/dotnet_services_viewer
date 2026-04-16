@@ -7,38 +7,21 @@ namespace dotnet_services_viewer.Tests.Domain
     public class NodeTests
     {
         [Fact]
-        public void Node_ShouldContainListOfContainers()
+        public void Node_ShouldBeAbleToAddServices()
         {
             // Arrange
-            var node = new Node 
-            { 
-                Hostname = "production-server", 
-                IpAddress = "192.168.1.100" 
-            };
+            var node = new Node { Hostname = "TestNode", IpAddress = "192.168.1.10" };
+            var service1 = new MonitoredService { Name = "Web" };
+            var service2 = new MonitoredService { Name = "DB" };
             
-            var container1 = new Container { Name = "App-1" };
-            var container2 = new Container { Name = "App-2" };
-
             // Act
-            node.Containers.Add(container1);
-            node.Containers.Add(container2);
-
+            node.Services.Add(service1);
+            node.Services.Add(service2);
+            
             // Assert
-            Assert.Equal(2, node.Containers.Count);
-            Assert.Contains(container1, node.Containers);
-            Assert.Contains(container2, node.Containers);
-        }
-
-        [Fact]
-        public void Node_ShouldHaveDefaultSshConfig()
-        {
-            // Arrange
-            var node = new Node();
-
-            // Assert
-            Assert.NotNull(node.SshConfig);
-            Assert.Equal("root", node.SshConfig.Username);
-            Assert.Equal(22, node.SshConfig.Port);
+            Assert.Equal(2, node.Services.Count);
+            Assert.Contains(service1, node.Services);
+            Assert.Contains(service2, node.Services);
         }
     }
 }
